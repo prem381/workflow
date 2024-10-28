@@ -1,11 +1,9 @@
 name: workflow action file
 
 on: 
-  push:
-    branch: 
-      - develop
-
-  jobs:
+ push:
+    branches: [ develop ]
+jobs:
     prepair-release:
       runs-on: ubuntu-latest
       
@@ -14,13 +12,13 @@ on:
           uses: actions/checkout@v4
 
         - name: create and push replease branch
-          env:
-            patkey: ${{ secret.patkey }}  
-    runs: |
-      git config user.name "github-actions[bot]"
-      git config user.email "github-actions[bot]@users.noreply.github.com"
-      git checkout -b release/$(date +%Y-%m-%d)
-      git push https://${{ secrets.patkey }}@github.com/${{ github.repository }}.git release/$(date +%Y-%m-%d)
+          env: 
+            patkey: ${{ secrets.patkey }}  
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -b release/$(date +%Y-%m-%d)
+            git push https://${{ secrets.patkey }}@github.com/${{ github.repository }}.git release/$(date +%Y-%m-%d)
 
     deploy-release:
       needs: prepair-release
@@ -32,14 +30,14 @@ on:
           uses: actions/checkout@v4
 
           env: 
-            patkey: ${{ secret.patket }}
+            patkey: ${{ secrets.patket }}
 
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout main
             git merge release/$(date +%Y-%m-%d)
-            git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git main
+            git push https://${{ secrets.patkey }}@github.com/${{ github.repository }}.git main
 
 
         - name: Create GitHub Release

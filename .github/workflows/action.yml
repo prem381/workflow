@@ -26,11 +26,13 @@ jobs:
       if: success()
 
       steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
         - name: checkout repository
-          uses: actions/checkout@v4
           env: 
-            patkey: ${{ secrets.patket }}
-           run: |
+            patkey: ${{ secrets.patkey }}
+          run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout main
@@ -47,11 +49,3 @@ jobs:
              body: "Automated monthly release for v1.0.${{ github.run_number }}"
              draft: false
              prerelease: false
-
-    notify:
-      needs: deploy-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Send notification
-          run: |
-             echo "Release complete! Notifying the team..." 

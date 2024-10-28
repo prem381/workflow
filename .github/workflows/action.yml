@@ -28,11 +28,9 @@ jobs:
       steps:
         - name: checkout repository
           uses: actions/checkout@v4
-
           env: 
             patkey: ${{ secrets.patket }}
-
-          run: |
+           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout main

@@ -1,9 +1,10 @@
 name: workflow action file
 
 on:
-  workflow_dispatch:
   push:
     branches: [ develop ]
+  workflow_dispatch: #allows menaul trigger
+
 jobs:
     prepair-release:
       runs-on: ubuntu-latest

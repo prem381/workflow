@@ -6,6 +6,9 @@ on:
   workflow_dispatch: #allows menaul trigger
 
 jobs:
+    Firstjob:
+        permissions:
+           contents: write
     prepair-release:
       runs-on: ubuntu-latest
       

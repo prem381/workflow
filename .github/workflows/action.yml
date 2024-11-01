@@ -15,7 +15,7 @@ jobs:
 
         - name: create and push replease branch
           env: 
-            patkey: ${{ secrets.PATKEY }}  
+            PATKEY: ${{ secrets.PATKEY }}  
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -33,7 +33,7 @@ jobs:
 
         - name: checkout repository
           env: 
-            patkey: ${{ secrets.PATKEY }}
+            PATKEY: ${{ secrets.PATKEY }}
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"

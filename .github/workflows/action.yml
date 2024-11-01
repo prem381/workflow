@@ -15,12 +15,12 @@ jobs:
 
         - name: create and push replease branch
           env: 
-            patkey: ${{ secrets.patkey }}  
+            patkey: ${{ secrets.PATKEY }}  
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout -b release/$(date +%Y-%m-%d)
-            git push https://${{ secrets.patkey }}@github.com/${{ github.repository }}.git release/$(date +%Y-%m-%d)
+            git push https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git release/$(date +%Y-%m-%d)
 
     deploy-release:
       needs: prepair-release
@@ -33,13 +33,13 @@ jobs:
 
         - name: checkout repository
           env: 
-            patkey: ${{ secrets.patkey }}
+            patkey: ${{ secrets.PATKEY }}
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout main
             git merge release/$(date +%Y-%m-%d)
-            git push https://${{ secrets.patkey }}@github.com/${{ github.repository }}.git main
+            git push https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git main
 
 
         - name: Create GitHub Release

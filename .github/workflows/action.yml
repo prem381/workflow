@@ -1,11 +1,15 @@
 name: workflow action file
+on:
+  schedule:
+    # Run this workflow every month on the 25th at 00:00 UTC
+    - cron: '0 0 25 * *'
+  workflow_dispatch: 
 
-on: 
- push:
-    branches: [ develop ]
 jobs:
     prepair-release:
       runs-on: ubuntu-latest
+      permissions:
+         contents: write
       
       steps:
         - name: checkout repository
@@ -13,7 +17,7 @@ jobs:
 
         - name: create and push replease branch
           env: 
-            PATKEY: ${{ secrets.PATKEY }}  
+            PATKEY: ${{secrets.PATKEY}}   
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -24,6 +28,8 @@ jobs:
       needs: prepair-release
       runs-on: ubuntu-latest       
       if: success()
+      permissions:
+         contents: write
 
       steps:
         - name: Checkout repository
@@ -31,7 +37,7 @@ jobs:
 
         - name: checkout repository
           env: 
-            PATKEY: ${{ secrets.PATKEY }}
+            PATKEY: ${{secrets.PATKEY}}
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -42,7 +48,7 @@ jobs:
 
         - name: Create GitHub Release
           id: create_release
-          uses: actions/create-release@v3
+          uses: actions/create-release@v4
           with:
              tag_name: v1.0.${{ github.run_number }} # Dynamic version
              release_name: "Release v1.0.${{ github.run_number }}"

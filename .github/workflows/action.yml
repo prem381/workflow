@@ -6,11 +6,10 @@ on:
   workflow_dispatch: #allows menaul trigger
 
 jobs:
-    Firstjob:
-        permissions:
-           contents: write
     prepair-release:
       runs-on: ubuntu-latest
+      permissions:
+         contents: write
       
       steps:
         - name: checkout repository
@@ -21,12 +20,15 @@ jobs:
             PATKEY: ${{secrets.PATKEY}}  
           run: |
             git checkout -b release/$(date +%Y-%m-%d)
+            git config user.email "github-actions[bot]@users.noreply.github.com"
             git push https://${{secrets.PATKEY}}}@github.com/prem381/workflow.git release/$(date +%Y-%m-%d)
 
     deploy-release:
       needs: prepair-release
       runs-on: ubuntu-latest       
       if: success()
+      permissions:
+         contents: write
 
       steps:
         - name: Checkout repository

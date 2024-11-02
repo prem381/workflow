@@ -3,9 +3,11 @@ on:
   schedule:
     # Run this workflow every month on the 25th at 00:00 UTC
     - cron: '0 0 25 * *'
+  #Allows us to manually trigger the workflow
   workflow_dispatch: 
 
 jobs:
+#prepair the release environment toi test the function
     prepair-release:
       runs-on: ubuntu-latest
       permissions:
@@ -14,12 +16,10 @@ jobs:
       steps:
         - name: checkout repository
           uses: actions/checkout@v4
-          
-        - name: checkout develop repo
-          run: git checkout develop
 
         - name: create and push replease branch
-          env: 
+          env:
+          # allow github action to perform
             PATKEY: ${{secrets.PATKEY}}   
           run: |
             git config user.name "github-actions[bot]"
@@ -28,6 +28,7 @@ jobs:
             git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git release/$(date +%Y-%m-%d)
 
     deploy-release:
+# if release invironment is successfull merge the release to main
       needs: prepair-release
       runs-on: ubuntu-latest       
       if: success()
@@ -36,7 +37,7 @@ jobs:
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@v2
+          uses: actions/checkout@v4
 
         - name: checkout repository
           env: 
@@ -48,6 +49,7 @@ jobs:
             git merge release/$(date +%Y-%m-%d)
             git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git main
 
+# Upon merging into mail branch this will release the code with new release version
 
         - name: Create GitHub Release
           id: create_release

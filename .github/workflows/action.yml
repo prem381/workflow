@@ -63,4 +63,5 @@ jobs:
              release_name: "Release v1.0.${{ github.run_number }}"
              body: "Automated monthly release for v1.0.${{ github.run_number }}"
              draft: false
-             prerelease: false
+             prerelease: fals
+            \

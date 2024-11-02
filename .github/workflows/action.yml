@@ -52,9 +52,8 @@ jobs:
             ls
             git merge release/$(date +%Y-%m-%d)
             git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git main
-
-# Upon merging into mail branch this will release the code with new release version
-
+            
+        # Upon merging into mail branch this will release the code with new release version
         - name: Create GitHub Release
           id: create_release
           uses: actions/create-release@v1
@@ -63,5 +62,4 @@ jobs:
              release_name: "Release v1.0.${{ github.run_number }}"
              body: "Automated monthly release for v1.0.${{ github.run_number }}"
              draft: false
-             prerelease: fals
-            \
+             prerelease: false

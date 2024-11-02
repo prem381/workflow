@@ -25,6 +25,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git checkout -b release/$(date +%Y-%m-%d)
+            ls
             git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git release/$(date +%Y-%m-%d)
 
     deploy-release:
@@ -45,7 +46,10 @@ jobs:
           run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
+            git remote update
+            ls
             git checkout main
+            ls
             git merge release/$(date +%Y-%m-%d)
             git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git main
 
@@ -59,4 +63,5 @@ jobs:
              release_name: "Release v1.0.${{ github.run_number }}"
              body: "Automated monthly release for v1.0.${{ github.run_number }}"
              draft: false
-             prerelease: false
+             prerelease: fals
+            \

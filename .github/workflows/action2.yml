@@ -3,7 +3,7 @@ name: Scheduled Release
 on:
   schedule:
     - cron: '0 0 25 * *'  # Runs at 00:00 UTC on the 25th of every month
-
+  workflow_dispatch:
 jobs:
   release:
     runs-on: ubuntu-latest

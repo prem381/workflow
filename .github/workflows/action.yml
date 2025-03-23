@@ -34,7 +34,6 @@ jobs:
           git checkout test
           else
           git checkout -b test
-          git push origin test  # Push newly created branch to remote
           fi
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
           git remote set-url --add test https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
@@ -65,7 +64,6 @@ jobs:
           git checkout main
           else
           git checkout -b main
-          git push origin main  # Push newly created branch to remote
           fi
           git merge --no-ff test -m "Merging test into master"
           git remote set-url --add main https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
@@ -95,7 +93,6 @@ jobs:
           git checkout release
           else
           git checkout -b release
-          git push origin release  # Push newly created branch to remote
           fi
           git merge --no-ff release -m "Merging main into release"
           git remote set-url --add release https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git

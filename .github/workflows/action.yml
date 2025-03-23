@@ -29,7 +29,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout test
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
-          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git test
+          git push origin https://${{secrets.PATKEY}}@github.com/prem381/workflow.git test
 
   test-test:
     name: Test on Test Branch
@@ -42,7 +42,7 @@ jobs:
           ref: test
         env:
           # allow github action to perform
-            PATKEY: ${secrets.PATKEY} 
+          PATKEY: ${secrets.PATKEY} 
 
     # If tests pass, merge to master
       - name: Merge to Master Branch
@@ -52,7 +52,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout master
           git merge --no-ff test -m "Merging test into master"
-          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git master
+          git push origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git master
 
   test-master:
     name: Test on Master Branch
@@ -63,3 +63,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
+        env:
+          # allow github action to perform
+          PATKEY: ${secrets.PATKEY} 
+  
+    # If tests pass, merge to release
+      - name: Merge to Master Branch
+        if: success()
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout master
+          git merge --no-ff test -m "Merging test into master"
+          git push origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git master
+  

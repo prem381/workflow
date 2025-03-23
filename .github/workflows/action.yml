@@ -37,7 +37,7 @@ jobs:
           git push origin test  # Push newly created branch to remote
           fi
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
-          git push origin https://${{secrets.PATKEY}}@github.com/prem381/workflow.git test
+          git push origin test
 
   test-test:
     name: Test on Test Branch

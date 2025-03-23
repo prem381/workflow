@@ -1,28 +1,25 @@
-name: Git Workflow CI/CD Pipeline
+name: Git Workflow CI/CD
+
 on:
   push:
     branches:
       - "feature/*"
+
 jobs:
   test-feature:
     name: Test on Feature Branch
     runs-on: ubuntu-latest
     steps:
-      - name: create and push replease branch
+      - name: Checkout Code
+        uses: actions/checkout@v4
         env:
         # allow github action to perform
           PATKEY: ${{secrets.PATKEY}} 
-      - name: Checkout Code
-        uses: actions/checkout@v4
 
       - name: Set up Python (if applicable)
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install Dependencies
-        run: |
-          pip install pytest beautifulsoup4
 
     # If tests pass, merge to the test branch
       - name: Merge to Test Branch
@@ -32,7 +29,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout test
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
-          git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git test
+          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git test
 
   test-test:
     name: Test on Test Branch
@@ -40,10 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Test Branch
-        uses: actions/checkout@v4
-        env:
-        # allow github action to perform
-          PATKEY: ${{secrets.PATKEY}} 
+        uses: actions/checkout@v3
         with:
           ref: test
 
@@ -59,7 +53,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout master
           git merge --no-ff test -m "Merging test into master"
-          git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git master
+          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git test
 
   test-master:
     name: Test on Master Branch
@@ -69,14 +63,7 @@ jobs:
       - name: Checkout Master Branch
         uses: actions/checkout@v4
         with:
-          ref: master
-        env:
-        # allow github action to perform
-          PATKEY: ${{secrets.PATKEY}}
-
-      - name: Run Tests on Master Branch
-        run: |
-          pytest  
+          ref: master  
 
   schedule-release:
     name: Release Branch Update
@@ -86,9 +73,6 @@ jobs:
     steps:
       - name: Checkout Master Branch
         uses: actions/checkout@v4
-        env:
-        # allow github action to perform
-          PATKEY: ${{secrets.PATKEY}} 
         with:
           ref: master
 
@@ -98,4 +82,4 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout release
           git merge --no-ff master -m "Merging master into release on 25th"
-          git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git release
+          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git release

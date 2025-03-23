@@ -1,8 +1,10 @@
 name: Git Workflow CI/CD
+
 on:
   push:
     branches:
       - "feature/*"
+
 jobs:
   test-feature:
     name: Test on Feature Branch
@@ -19,11 +21,6 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install Dependencies
-        run: |
-          sudo apt update -y
-          sudo apt install apache2 -y
-
     # If tests pass, merge to the test branch
       - name: Merge to Test Branch
         if: success()
@@ -32,7 +29,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout test
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
-          git push origin https://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@github.com/prem381/workflow.git test
+          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git test
 
   test-test:
     name: Test on Test Branch
@@ -40,9 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Test Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
-          ref: test 
+          ref: test
+
+      - name: Run Tests on Test Branch
+        run: |
+          pytest  
 
     # If tests pass, merge to master
       - name: Merge to Master Branch
@@ -52,7 +53,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout master
           git merge --no-ff test -m "Merging test into master"
-          git push origin https://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@github.com/prem381/workflow.git master
+          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git test
 
   test-master:
     name: Test on Master Branch
@@ -81,4 +82,4 @@ jobs:
           git config --global user.email "actions@github.com"
           git checkout release
           git merge --no-ff master -m "Merging master into release on 25th"
-          git push origin https://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@github.com/prem381/workflow.git release
+          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git release

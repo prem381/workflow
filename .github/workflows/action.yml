@@ -1,67 +1,101 @@
-name: workflow action file
+name: Git Workflow CI/CD Pipeline
 on:
-  schedule:
-    # Run this workflow every month on the 25th at 00:00 UTC
-    - cron: '0 0 25 * *'
-  #Allows us to manually trigger the workflow
-  workflow_dispatch: 
-
+  push:
+    branches:
+      - "feature/*"
 jobs:
-#prepair the release environment toi test the function
-    prepair-release:
-      runs-on: ubuntu-latest
-      permissions:
-         contents: write
-      
-      steps:
-        - name: checkout repository
-          uses: actions/checkout@v4
+  test-feature:
+    name: Test on Feature Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: create and push replease branch
+        env:
+        # allow github action to perform
+          PATKEY: ${{secrets.PATKEY}} 
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-        - name: create and push replease branch
-          env:
-          # allow github action to perform
-            PATKEY: ${{secrets.PATKEY}}   
-          run: |
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git checkout -b release/$(date +%Y-%m-%d)
-            ls
-            git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git release/$(date +%Y-%m-%d)
+      - name: Set up Python (if applicable)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-    deploy-release:
-# if release invironment is successfull merge the release to main
-      needs: prepair-release
-      runs-on: ubuntu-latest       
-      if: success()
-      permissions:
-         contents: write
+      - name: Install Dependencies
+        run: |
+          pip install pytest beautifulsoup4
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    # If tests pass, merge to the test branch
+      - name: Merge to Test Branch
+        if: success()
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout test
+          git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
+          git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git test
 
-        - name: checkout repository
-          env: 
-            PATKEY: ${{secrets.PATKEY}}
-          run: |
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git remote update
-            ls
-            git checkout main
-            ls
-            git merge release/$(date +%Y-%m-%d)
-            git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git main
+  test-test:
+    name: Test on Test Branch
+    needs: test-feature
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Test Branch
+        uses: actions/checkout@v4
+        env:
+        # allow github action to perform
+          PATKEY: ${{secrets.PATKEY}} 
+        with:
+          ref: test
 
-# Upon merging into mail branch this will release the code with new release version
+      - name: Run Tests on Test Branch
+        run: |
+          pytest  
 
-        - name: Create GitHub Release
-          id: create_release
-          uses: actions/create-release@v1
-          with:
-             tag_name: v1.0.${{ github.run_number }} # Dynamic version
-             release_name: "Release v1.0.${{ github.run_number }}"
-             body: "Automated monthly release for v1.0.${{ github.run_number }}"
-             draft: false
-             prerelease: fals
-            \
+    # If tests pass, merge to master
+      - name: Merge to Master Branch
+        if: success()
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout master
+          git merge --no-ff test -m "Merging test into master"
+          git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git master
+
+  test-master:
+    name: Test on Master Branch
+    needs: test-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Master Branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+        env:
+        # allow github action to perform
+          PATKEY: ${{secrets.PATKEY}}
+
+      - name: Run Tests on Master Branch
+        run: |
+          pytest  
+
+  schedule-release:
+    name: Release Branch Update
+    needs: test-master
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 0 25 * *'
+    steps:
+      - name: Checkout Master Branch
+        uses: actions/checkout@v4
+        env:
+        # allow github action to perform
+          PATKEY: ${{secrets.PATKEY}} 
+        with:
+          ref: master
+
+      - name: Merge to Release Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout release
+          git merge --no-ff master -m "Merging master into release on 25th"
+          git push https://${{secrets.PATKEY}}@github.com/prem381/workflow.git release

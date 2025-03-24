@@ -1,7 +1,8 @@
 name: Feature to Test Branch
 on:
   push:
-    branches: feature
+    branches: 
+    - feature
   workflow_dispatch:
 
 jobs:

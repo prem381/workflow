@@ -1,4 +1,4 @@
-name: Git Workflow CI/CD
+name: Git Workflow CI/CD action1 file
 on:
   push:
     branches:

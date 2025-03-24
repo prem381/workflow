@@ -24,7 +24,6 @@ jobs:
         run: |
           git init
           git clone https://github.com/prem381/workflow.git
-          git remote add origin https://github.com/prem381/workflow.git
           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git fetch origin
 

@@ -1,24 +1,40 @@
-name: Scheduled Release Master
+name: Master to Release Branch
+
 on:
   schedule:
-    - cron: '* * 25 * *'  # Runs at 00:00 UTC on the 25th of every month
+    - cron: "0 0 25 * *" # Runs at midnight UTC on the 25th of each month
   workflow_dispatch:
+
 jobs:
-  release:
+  test-master:
+    name: Test on Master Branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Master Branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for merging branches
+          ref: master
 
-      - name: Merge Master into Release
-        if: github.event_name == 'schedule'
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add actual test commands (e.g., pytest)
+
+      - name: Merge to Release Branch
+        if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git checkout master
-          git pull origin master
-          git checkout release
-          git merge --no-ff master -m "Merging master into release on 25th"
-          git push origin https://${secrets.PATKEY}@github.com/prem381/workflow.git release
+
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+          git fetch origin
+
+          if git ls-remote --heads origin release | grep release; then
+            git checkout release
+          else
+            git checkout -b release
+            git push origin release
+          fi
+
+          git merge --no-ff master -m "Merging master into release"
+          git push origin release

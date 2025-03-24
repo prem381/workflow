@@ -47,6 +47,7 @@ Command:
 Step 6--> Create other branches in the below structure.
 
 master --> Test --> feature
+
   |
   --> release
   

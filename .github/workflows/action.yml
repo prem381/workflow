@@ -1,9 +1,9 @@
-name: Git Workflow CI/CD  action file
+name: Feature to Test Branch
+
 on:
   push:
     branches:
       - "feature/*"
-      - test
   workflow_dispatch:
 
 jobs:
@@ -19,86 +19,26 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Debug Secrets
-        run: echo "PATKEY length: ${PATKEY}"
-        env:
-          PATKEY: ${{ secrets.PATKEY }}
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add actual test commands (e.g., pytest)
 
       - name: Merge to Test Branch
         if: success()
         run: |
-          git clone https://github.com/prem381/workflow.git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git fetch origin
 
-          # Check if 'test' branch exists, create if not
-          if git rev-parse --verify origin/test >/dev/null 2>&1; then
+          if git ls-remote --heads origin test | grep test; then
             git checkout test
           else
             git checkout -b test
             git push origin test
           fi
 
-          # Merge feature branch into test
-          git merge --no-ff test -m "Merging feature into test"
+          git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
           git push origin test
-
-  test-test:
-    name: Test on Test Branch
-    needs: test-feature
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Test Branch
-        uses: actions/checkout@v4
-        with:
-          ref: test
-
-      - name: Merge to Master Branch
-        if: success()
-        run: |
-          git clone https://github.com/prem381/workflow.git
-          git remote add origin https://github.com/prem381/workflow.git
-          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
-          git fetch origin
-
-          # Check if 'master' branch exists, create if not
-          if git rev-parse --verify origin/master >/dev/null 2>&1; then
-            git checkout master
-          else
-            git checkout -b master
-            git push origin master
-          fi
-
-          # Merge test into master
-          git merge --no-ff test -m "Merging test into master"
-          git push origin master
-
-  test-master:
-    name: Test on Master Branch
-    needs: test-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Master Branch
-        uses: actions/checkout@v4
-        with:
-          ref: master
-
-      - name: Merge to Release Branch
-        if: success()
-        run: |
-          git clone https://github.com/prem381/workflow.git
-          git remote add origin https://github.com/prem381/workflow.git
-          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
-          git fetch origin
-
-          # Check if 'release' branch exists, create if not
-          if git rev-parse --verify origin/release >/dev/null 2>&1; then
-            git checkout release
-          else
-            git checkout -b release
-            git push origin release
-          fi
-
-          # Merge master into release
-          git merge --no-ff master -m "Merging master into release"
-          git push origin release

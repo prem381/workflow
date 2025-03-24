@@ -51,6 +51,5 @@ master --> Test --> feature
   |
   --> release
   
-{ This will block the coding person to sync with wrong branches. }
 
 update the feature.txt file and push it to feature branch to test the workflow.

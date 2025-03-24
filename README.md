@@ -24,9 +24,11 @@ Step 4--> Create an action.yml file at ./GitHub/workflow/ directory.
 
 Command:
 
-        mkdir .github/workflow
-        cd .github/workflow      
+        mkdir .github/workflows
+        cd .github/workflows     
         sudo nano action.yml    # refer the workflow code from action.yml file in this repo.
+        sudo nano action1.yml    # refer the second workflow code from action1.yml file in this repo.
+        sudo nano action2.yml    # refer the third workflow code from action2.yml file in this repo.
         
 Step 5--> Create master.txt file on master branch.
 

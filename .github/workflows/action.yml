@@ -12,29 +12,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        env:
-        # allow github action to perform
-          PATKEY: ${{secrets.PATKEY}}
 
-      - name: Set up Python (if applicable)
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-    # If tests pass, merge to the test branch
       - name: Merge to Test Branch
         if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          # fetch all branch
           git fetch origin
+
           # Check if 'test' branch exists, create if not
           if git rev-parse --verify origin/test >/dev/null 2>&1; then
-          git checkout test
+            git checkout test
           else
-          git checkout -b test
+            git checkout -b test
+            git push origin test
           fi
+
+          # Merge feature branch into test
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin test
@@ -48,26 +47,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: test
-        env:
-          # allow github action to perform
-          PATKEY: ${secrets.PATKEY} 
 
-    # If tests pass, merge to master
       - name: Merge to Master Branch
         if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git fetch origin
-          # Check if 'main' branch exists, create if not
-          if git rev-parse --verify origin/main >/dev/null 2>&1; then
-          git checkout main
+
+          # Check if 'master' branch exists, create if not
+          if git rev-parse --verify origin/master >/dev/null 2>&1; then
+            git checkout master
           else
-          git checkout -b main
+            git checkout -b master
+            git push origin master
           fi
+
+          # Merge test into master
           git merge --no-ff test -m "Merging test into master"
           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
-          git push origin main
+          git push origin master
+
   test-master:
     name: Test on Master Branch
     needs: test-test
@@ -77,23 +77,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
-        env:
-          # allow github action to perform
-          PATKEY: ${secrets.PATKEY} 
-  
-    # If tests pass, merge to release
-      - name: Merge to Master Branch
+
+      - name: Merge to Release Branch
         if: success()
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git fetch origin
+
           # Check if 'release' branch exists, create if not
           if git rev-parse --verify origin/release >/dev/null 2>&1; then
-          git checkout release
+            git checkout release
           else
-          git checkout -b release
+            git checkout -b release
+            git push origin release
           fi
-          git merge --no-ff release -m "Merging main into release"
+
+          # Merge master into release
+          git merge --no-ff master -m "Merging master into release"
           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin release

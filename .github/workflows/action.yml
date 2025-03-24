@@ -19,6 +19,11 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Debug Secrets
+        run: echo "PATKEY length: ${PATKEY}"
+        env:
+          PATKEY: ${{ secrets.PATKEY }}
+
       - name: Merge to Test Branch
         if: success()
         run: |

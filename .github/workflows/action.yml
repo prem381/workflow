@@ -24,6 +24,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git fetch origin
 
           # Check if 'test' branch exists, create if not
@@ -36,7 +37,6 @@ jobs:
 
           # Merge feature branch into test
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
-          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin test
 
   test-test:
@@ -54,6 +54,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git fetch origin
 
           # Check if 'master' branch exists, create if not
@@ -66,7 +67,6 @@ jobs:
 
           # Merge test into master
           git merge --no-ff test -m "Merging test into master"
-          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin master
 
   test-master:
@@ -84,6 +84,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git fetch origin
 
           # Check if 'release' branch exists, create if not
@@ -96,5 +97,4 @@ jobs:
 
           # Merge master into release
           git merge --no-ff master -m "Merging master into release"
-          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin release

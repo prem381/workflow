@@ -5,7 +5,6 @@ on:
       - "feature/*"
       - test
   workflow_dispatch:
-
 jobs:
   test-feature:
     name: Test on Feature Branch
@@ -17,6 +16,20 @@ jobs:
       - name: Merge to Test Branch
         if: success()
         run: |
-          git config --global user.name "GitHub Actions"
-       git config --global user.email "actions@github.com"
-       
+           git init
+           git rempte add origin ....
+           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+           git clone https://github.com/prem381/workflow.git
+           git fetch origin
+           git checkout test
+           git push origin test
+
+---
+name: Git Workflow CI/CD
+on:
+  workflow_dispatch:
+  if:
+   name: test-feature
+     if: ${{ true }}
+  schedule:
+     - cron: "0 0 0 25 0 0"

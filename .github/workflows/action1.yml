@@ -1,35 +1,41 @@
-name: Git Workflow CI/CD action1 file
+name: Test to Master Branch
+
 on:
   push:
     branches:
-      - "feature/*"
-      - test
+      - "test"
   workflow_dispatch:
+
 jobs:
-  test-feature:
-    name: Test on Feature Branch
+  test-test:
+    name: Test on Test Branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout Test Branch
         uses: actions/checkout@v4
+        with:
+          ref: test
 
-      - name: Merge to Test Branch
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add actual test commands (e.g., pytest)
+
+      - name: Merge to Master Branch
         if: success()
         run: |
-           git init
-           git rempte add origin ....
-           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
-           git clone https://github.com/prem381/workflow.git
-           git fetch origin
-           git checkout test
-           git push origin test
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
----
-name: Git Workflow CI/CD
-on:
-  workflow_dispatch:
-  if:
-   name: test-feature
-     if: ${{ true }}
-  schedule:
-     - cron: "0 0 0 25 0 0"
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+          git fetch origin
+
+          if git ls-remote --heads origin master | grep master; then
+            git checkout master
+          else
+            git checkout -b master
+            git push origin master
+          fi
+
+          git merge --no-ff test -m "Merging test into master"
+          git push origin master

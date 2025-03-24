@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
         env:
         # allow github action to perform
-          PATKEY: ${secrets.PATKEY} 
+          PATKEY: ${{secrets.PATKEY}}
 
       - name: Set up Python (if applicable)
         uses: actions/setup-python@v4
@@ -36,7 +36,7 @@ jobs:
           git checkout -b test
           fi
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
-          git remote set-url --add test https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin test
 
   test-test:
@@ -66,7 +66,7 @@ jobs:
           git checkout -b main
           fi
           git merge --no-ff test -m "Merging test into master"
-          git remote set-url --add main https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git push origin main
   test-master:
     name: Test on Master Branch
@@ -95,5 +95,5 @@ jobs:
           git checkout -b release
           fi
           git merge --no-ff release -m "Merging main into release"
-          git remote set-url --add release https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
-          git push origin release  
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+          git push origin release

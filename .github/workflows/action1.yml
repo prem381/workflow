@@ -1,9 +1,8 @@
-name: Test to Master Branch
-
 on:
-  push:
-    branches: 
-    - test
+  workflow_run:
+    workflows: ["Feature to Test Branch"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:

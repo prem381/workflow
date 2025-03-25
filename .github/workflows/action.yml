@@ -1,4 +1,4 @@
-name: Feature to Test Branch
+name: Feature to Test and master Branch
 on:
   push:
     branches: 
@@ -41,3 +41,36 @@ jobs:
 
           git merge --no-ff $(git rev-parse --abbrev-ref HEAD) -m "Merging feature into test"
           git push origin test
+
+  test-test:
+    name: Test on Test Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Test Branch
+        uses: actions/checkout@v4
+        with:
+          ref: test
+
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add actual test commands (e.g., pytest)
+
+      - name: Merge to Master Branch
+        if: success()
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
+          git fetch origin
+
+          if git ls-remote --heads origin master | grep master; then
+            git checkout master
+          else
+            git checkout -b master
+            git push origin master
+          fi
+
+          git merge --no-ff test -m "Merging test into master"
+          git push origin master

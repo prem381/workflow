@@ -1,4 +1,4 @@
-name: Feature to Test and master Branch
+name: Feature to Test Branch
 on:
   push:
     branches: 
@@ -72,5 +72,5 @@ jobs:
             git push origin master
           fi
 
-          git merge --no-ff test -m "Merging test into master"
+          git merge --no-ff master -m "Merging test into master"
           git push origin master

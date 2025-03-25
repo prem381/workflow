@@ -1,8 +1,9 @@
 name: Master to Release Branch
-
 on:
-  schedule:
-    - cron: "0 0 25 * *" # Runs at midnight UTC on the 25th of each month
+  workflow_run:
+    workflows: ["Feature to Test and master Branch"]
+    types:
+      - completed
     
   workflow_dispatch:
 

@@ -1,7 +1,7 @@
 name: Main to Release Branch
 on:
   workflow_run:
-    workflows: ["Test and master"]
+    workflows: ["Test to master"]
     types:
       - completed
     

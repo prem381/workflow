@@ -30,7 +30,7 @@ Command:
         sudo nano action1.yml    # refer the second workflow code from action1.yml file in this repo.
         sudo nano action2.yml    # refer the third workflow code from action2.yml file in this repo.
         
-Step 5--> Create master.txt file on master branch.
+Step 5--> Create new_fearure.txt file on master branch.
 
 Command: 
 
@@ -44,6 +44,12 @@ master --> Test --> feature
 
   |
   --> release
-  
 
-update the feature.txt file and push it to feature branch to test the workflow.
+Step --> checkout to feature branch and create a feature.txt file and push it to feature branch to test the workflow.
+       
+       git checkout feature
+       nano new_feature.txt
+       git add new_feature.txt
+       git comit -m "Created feature code"
+       git push origin feature
+

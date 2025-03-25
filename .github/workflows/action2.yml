@@ -1,7 +1,7 @@
 name: Master to Release Branch
 on:
   workflow_run:
-    workflows: ["Feature to Test and master Branch"]
+    workflows: ["Test and master"]
     types:
       - completed
     

@@ -1,4 +1,4 @@
-name: Master to Release Branch
+name: Main to Release Branch
 on:
   workflow_run:
     workflows: ["Test and master"]
@@ -8,14 +8,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-master:
-    name: Test on Master Branch
+  test-main:
+    name: Test on Main Branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Master Branch
+      - name: Checkout Main Branch
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       - name: Run Tests
         run: |

@@ -20,7 +20,7 @@ jobs:
           echo "Running tests..."
           # Add actual test commands (e.g., pytest)
 
-      - name: Merge to Master Branch
+      - name: Merge to test Branch
         if: success()
         run: |
           git config --global user.name "GitHub Actions"
@@ -29,12 +29,12 @@ jobs:
           git remote set-url origin https://${{ secrets.PATKEY }}@github.com/prem381/workflow.git
           git fetch origin
 
-          if git ls-remote --heads origin master | grep master; then
-            git checkout master
+          if git ls-remote --heads origin test | grep test; then
+            git checkout test
           else
-            git checkout -b master
-            git push origin master
+            git checkout -b test
+            git push origin test
           fi
 
-          git merge --no-ff test -m "Merging test into master"
-          git push origin master
+          git merge --no-ff test -m "Merging test into test"
+          git push origin test

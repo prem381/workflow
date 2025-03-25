@@ -38,5 +38,5 @@ jobs:
             git push origin release
           fi
 
-          git merge --no-ff master -m "Merging master into release"
+          git merge --no-ff release -m "Merging main into release"
           git push origin release
